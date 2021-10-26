@@ -13,12 +13,14 @@ type Params = {
   type: "abbr" | "kind" | "menu";
   hlGroupAddition: string;
   hlGroupDeletion: string;
+  hlGroupKeep: string;
 };
 
 export class Filter extends BaseFilter<Params> {
   async onInit(args: OnInitArguments<Params>): Promise<void> {
-    await args.denops.cmd(`highlight OnpDeletion ctermfg=Red guifg=Red`)
-    await args.denops.cmd(`highlight OnpAddition ctermfg=Green guifg=Green`)
+    await args.denops.cmd(`highlight OnpDeletion ctermfg=Red guifg=Red`);
+    await args.denops.cmd(`highlight OnpAddition ctermfg=Green guifg=Green`);
+    await args.denops.cmd(`highlight link OnpKeep Pmenu`);
   }
   override filter(args: FilterArguments<Params>): Promise<Candidate[]> {
     return Promise.resolve(args.candidates.map((candidate) => {
@@ -36,6 +38,15 @@ export class Filter extends BaseFilter<Params> {
               width: result.right.length,
             });
             break;
+          case 0:
+            highlights.push({
+              col: preview.length,
+              type: args.filterParams.type,
+              name: "ddc_onp_keep",
+              "hl_group": args.filterParams.hlGroupKeep,
+              width: result.right.length,
+            });
+            break;
           case -1:
             highlights.push({
               col: preview.length,
@@ -48,7 +59,7 @@ export class Filter extends BaseFilter<Params> {
         }
         preview += result.right;
       }
-      return { ...candidate, [args.filterParams.type]:preview, highlights };
+      return { ...candidate, [args.filterParams.type]: preview, highlights };
     }));
   }
   override params(): Params {
@@ -56,6 +67,7 @@ export class Filter extends BaseFilter<Params> {
       type: "abbr",
       hlGroupAddition: "OnpAddition",
       hlGroupDeletion: "OnpDeletion",
+      hlGroupKeep: "OnpKeep",
     };
   }
 }
