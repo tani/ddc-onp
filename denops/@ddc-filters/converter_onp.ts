@@ -17,7 +17,7 @@ type Params = {
 };
 
 export class Filter extends BaseFilter<Params> {
-  async onInit(args: OnInitArguments<Params>): Promise<void> {
+  override async onInit(args: OnInitArguments<Params>): Promise<void> {
     await args.denops.cmd(`highlight OnpDeletion ctermfg=Red guifg=Red`);
     await args.denops.cmd(`highlight OnpAddition ctermfg=Green guifg=Green`);
     await args.denops.cmd(`highlight link OnpKeep Pmenu`);
