@@ -2,12 +2,12 @@
 // This work is licensed under the MIT License. https://git.io/mit-license
 
 import onp from "https://esm.sh/onp@2";
-import { Candidate } from "https://lib.deno.dev/x/ddc_vim@v0/types.ts";
+import { Item } from "https://lib.deno.dev/x/ddc_vim@v3/types.ts";
 import {
   BaseFilter,
   FilterArguments,
   OnInitArguments,
-} from "https://lib.deno.dev/x/ddc_vim@v0/base/filter.ts";
+} from "https://lib.deno.dev/x/ddc_vim@v3/base/filter.ts";
 
 type Params = {
   type: "abbr" | "kind" | "menu";
@@ -22,11 +22,11 @@ export class Filter extends BaseFilter<Params> {
     await args.denops.cmd(`highlight OnpAddition ctermfg=Green guifg=Green`);
     await args.denops.cmd(`highlight link OnpKeep Pmenu`);
   }
-  override filter(args: FilterArguments<Params>): Promise<Candidate[]> {
-    return Promise.resolve(args.candidates.map((candidate) => {
-      const diff = onp.diffText(args.completeStr, candidate.word);
+  override filter(args: FilterArguments<Params>): Promise<Item[]> {
+    return Promise.resolve(args.items.map((item) => {
+      const diff = onp.diffText(args.completeStr, item.word);
       let preview = "";
-      const highlights: typeof candidate.highlights = [];
+      const highlights: typeof item.highlights = [];
       for (const result of diff.results) {
         switch (result.state) {
           case 1:
@@ -59,7 +59,7 @@ export class Filter extends BaseFilter<Params> {
         }
         preview += result.right;
       }
-      return { ...candidate, [args.filterParams.type]: preview, highlights };
+      return { ...item, [args.filterParams.type]: preview, highlights };
     }));
   }
   override params(): Params {
